@@ -110,3 +110,20 @@ Gateways::$gateways['sofort'] = [
         return completeStripePayment($virtualOrderPage, $data);
     },
 ];
+
+Gateways::$gateways['ideal'] = [
+    'initializePayment' => function (OrderPage $virtualOrderPage): OrderPage
+    {
+        $data = [
+        ];
+        $source = Payment::createStripeSource($virtualOrderPage->cart()->getSum(), 'ideal', $data);
+        $virtualOrderPage->content()->update([
+            'redirect' => $source->redirect->url,
+        ]);
+        return $virtualOrderPage;
+    },
+    'completePayment' => function (OrderPage $virtualOrderPage, array $data): OrderPage
+    {
+        return completeStripePayment($virtualOrderPage, $data);
+    },
+];
